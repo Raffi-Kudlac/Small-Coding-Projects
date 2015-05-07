@@ -18,9 +18,9 @@ public class prime {
 		// index 1 holds number of iterations
 		// index 2 holds time in millicesonds to complete
 		// index 3 hold number of times the algorithm is to be executed. Set to 1
-		double primeData[][] = new double[4][4];
+		double primeData[][] = new double[5][4];
 		
-		long amount = 90000000;	
+		long amount = 70000000;	
 		
 		primeData[0][3] = 1;		
 		method1(amount,0,primeData);
@@ -34,11 +34,16 @@ public class prime {
 //		method3(amount,2,primeData);
 //		toString(primeData,2);
 		
-		primeData[3][3] =1;
+		primeData[3][3] = 1;
 		method4(amount,3,primeData);
 		toString(primeData,3);
 		
-		//compareItterations(primeData,0,3);		
+		
+		primeData[4][3] =1;
+		method5(amount,4,primeData);
+		toString(primeData,4);
+		
+		compareItterations(primeData,3,4);		
 	}
 	
 	/**
@@ -343,6 +348,103 @@ public class prime {
 	/**
 	 * 
 	 * @Purpose:
+	 *		The 5th algorithm. The sieve of atkins.
+	 *		the algorithm can be seen here.
+	 *		http://en.wikipedia.org/wiki/Sieve_of_Atkin
+	 * @param amount:
+	 * 			Find all the primes up until this number
+	 * @param index
+	 * 			The position this algorithm is in the 2D array
+	 * @param pd
+	 * 			The information that will be recorded. See main method
+	 * 			for details
+	 */
+	public static void method5(long amount, int index, double[][] pd)
+	{
+		
+		long startTime = System.currentTimeMillis();		
+		long endTime = 0;
+		pd[index][1] = 0;
+		
+		//will hold the prime numbers
+		ArrayList<Integer> primes = new ArrayList<Integer>();
+		//each index maps to a real number, if true then the index is prime
+		ArrayList<Boolean> sieve = new ArrayList<Boolean>();
+		
+		//initalize sieve list to all false
+		for(int x = 0; x < amount; x++ )
+		{
+			pd[index][1]++;
+			sieve.add(false);
+		}
+		
+		primes.add(2);
+		primes.add(3);		
+		
+		int limit = (int) Math.ceil(Math.sqrt(amount));
+		
+		long n = 0;
+		
+		for(int x = 1; x <= limit; x++)
+		{
+			for(int y = 1; y <= limit; y++)
+			{
+				pd[index][1]++;
+				
+				n = (4*x*x) + (y*y);
+				if(n <= amount && (n % 12 == 1 || n % 12 == 5))
+				{
+					sieve.set((int)n, true);
+				}
+				
+				n = (3*x*x) + (y*y);
+				if(n <= amount && (n % 12 == 7 ))
+				{
+					sieve.set((int) n, true);
+				}
+				
+				n = (3*x*x) - (y*y);
+				if((n <= amount) && (x > y) && (n % 12 == 11))
+				{
+					sieve.set((int) n , true);
+				}				
+			}			
+		}
+		
+		//finds a prime and loops through all multiples turning them false
+		//can be refactored into above loop
+		for(int r = 5; r <= limit; r++)
+		{
+			if(sieve.get(r))
+			{
+				for(int k = r*r; k < amount; k += r)
+				{
+					pd[index][1]++;
+					sieve.set(k, false);
+				}
+			}
+		}
+		
+		//adds prime to prime list
+		// can also be refactored into first loop
+		for(int h = 5; h < amount; h++)
+		{
+			if(sieve.get(h))
+			{
+				pd[index][1]++;
+				primes.add(h);				
+			}
+		}
+		
+		pd[index][0] = primes.size();		
+		endTime = System.currentTimeMillis();
+		pd[index][2] = (endTime - startTime)/1000.0;		
+	}
+	
+	
+	/**
+	 * 
+	 * @Purpose:
 	 *		The formula used by the 4th algorithm
 	 * @param i
 	 * 		A number somewhere in the range of 1 and the amount  
@@ -406,7 +508,4 @@ public class prime {
 		System.out.println("\tLooped " + pd[index][3] + " time(s)");
 		System.out.println("\tMade " + df.format((long)pd[index][1]) + " itterations \n");
 	}
-
-
-
 }
