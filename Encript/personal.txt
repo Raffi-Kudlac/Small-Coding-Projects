@@ -1,0 +1,5 @@
+Hello
+
+My Name is Raffi and i some times want to keep files private from other people.
+So i wrote this encription program to learn how this stuff works. It would be so cool
+if other people were unable to read this.
